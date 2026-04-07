@@ -5,6 +5,7 @@ import type { AuthError, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthContext } from "@/providers/auth-provider";
 import { RUOLI } from "@/lib/constants";
+import { profileSchema } from "@/lib/validations/profile";
 import type { Profile, UserRole } from "@/types";
 
 // ---------------------------------------------------------------------------
@@ -29,14 +30,21 @@ export interface UseAuthReturn {
 
 async function fetchProfile(userId: string): Promise<Profile | null> {
   const supabase = createClient();
-  const { data, error } = await supabase
+  // database.ts is a placeholder until types are regenerated; cast required.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from("profiles")
-    .select("*")
+    .select("id, email, full_name, phone, role, workplace_id, avatar_url, created_at, updated_at")
     .eq("id", userId)
     .single();
 
   if (error ?? !data) return null;
-  return data as Profile;
+
+  // H4: validate the raw DB row before trusting it as Profile
+  const parsed = profileSchema.safeParse(data);
+  if (!parsed.success) return null;
+
+  return parsed.data as Profile;
 }
 
 // ---------------------------------------------------------------------------
@@ -48,12 +56,8 @@ export function useAuth(): UseAuthReturn {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    if (!user) {
-      setProfile(null);
-      return;
-    }
-
-    fetchProfile(user.id).then(setProfile);
+    const task = user ? fetchProfile(user.id) : Promise.resolve(null);
+    void task.then(setProfile);
   }, [user]);
 
   async function signIn(

@@ -39,8 +39,12 @@ vi.mock("next/navigation", () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
+// UUIDs conform to the format expected by profileSchema (z.uuid())
+const USER_UUID = "550e8400-e29b-41d4-a716-446655440001";
+const WORKPLACE_UUID = "550e8400-e29b-41d4-a716-446655440002";
+
 const fakeUser: User = {
-  id: "user-123",
+  id: USER_UUID,
   email: "alice@example.com",
   app_metadata: {},
   user_metadata: {},
@@ -49,12 +53,12 @@ const fakeUser: User = {
 } as User;
 
 const fakeProfile: Profile = {
-  id: "user-123",
+  id: USER_UUID,
   email: "alice@example.com",
   full_name: "Alice Rossi",
   phone: null,
   role: "manager",
-  workplace_id: "wp-1",
+  workplace_id: WORKPLACE_UUID,
   avatar_url: null,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -143,7 +147,9 @@ describe("useAuth", () => {
       });
 
       expect(mockFrom).toHaveBeenCalledWith("profiles");
-      expect(mockSelect).toHaveBeenCalledWith("*");
+      expect(mockSelect).toHaveBeenCalledWith(
+        "id, email, full_name, phone, role, workplace_id, avatar_url, created_at, updated_at",
+      );
       expect(mockEq).toHaveBeenCalledWith("id", fakeUser.id);
     });
 
@@ -182,6 +188,27 @@ describe("useAuth", () => {
       const { result } = renderHook(() => useAuth());
 
       expect(result.current.role).toBeNull();
+    });
+
+    it("returns null profile when DB row fails Zod validation (H4)", async () => {
+      // Simulate a malformed row — missing required fields / wrong UUID format
+      const malformedRow = { id: "not-a-uuid", role: "unknown-role" };
+      mockUseAuthContext.mockReturnValue({ user: fakeUser, loading: false });
+      mockFrom.mockReturnValue({
+        select: () => ({
+          eq: () => ({
+            single: () => Promise.resolve({ data: malformedRow, error: null }),
+          }),
+        }),
+      });
+
+      const { useAuth } = await import("./use-auth");
+      const { result } = renderHook(() => useAuth());
+
+      await waitFor(() => {
+        // Effect has run; profile should remain null despite data being returned
+        expect(result.current.profile).toBeNull();
+      });
     });
   });
 
