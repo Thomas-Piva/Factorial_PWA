@@ -3,34 +3,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { RoleGate } from "@/components/shared/role-gate";
 import { RUOLI } from "@/lib/constants";
 import { registerUser } from "./_actions";
-
-// ---------------------------------------------------------------------------
-// Validation schema
-// ---------------------------------------------------------------------------
-
-const registerSchema = z.object({
-  email: z
-    .string()
-    .min(1, "L'email è obbligatoria")
-    .email("Inserisci un'email valida"),
-  password: z.string().min(8, "La password deve avere almeno 8 caratteri"),
-  full_name: z.string().min(2, "Il nome completo è obbligatorio"),
-  // H3: format validation to prevent stored-XSS via malicious phone strings
-  phone: z
-    .string()
-    .min(1, "Il telefono è obbligatorio")
-    .regex(
-      /^\+?[\d\s\-()+]{6,20}$/,
-      "Inserisci un numero di telefono valido",
-    ),
-  role: z.enum([RUOLI.MANAGER, RUOLI.EMPLOYEE] as [string, ...string[]]),
-});
-
-type RegisterFormValues = z.infer<typeof registerSchema>;
+import { registerSchema, type RegisterFormValues } from "./_schema";
 
 // ---------------------------------------------------------------------------
 // Form (exported for direct testing)

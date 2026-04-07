@@ -147,6 +147,53 @@ describe("registerUser — server action", () => {
   });
 
   // -------------------------------------------------------------------------
+  // H3 — Server-side input validation
+  // -------------------------------------------------------------------------
+
+  describe("input validation (H3)", () => {
+    beforeEach(() => {
+      mockManagerCaller();
+    });
+
+    it("returns error when email is invalid", async () => {
+      const { registerUser } = await import("./_actions");
+      const result = await registerUser({ ...validPayload, email: "non-un-email" });
+
+      expect(result.error).toBeTruthy();
+      expect(mockCreateUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error when password is too short", async () => {
+      const { registerUser } = await import("./_actions");
+      const result = await registerUser({ ...validPayload, password: "short" });
+
+      expect(result.error).toBeTruthy();
+      expect(mockCreateUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error when phone contains invalid characters (XSS attempt)", async () => {
+      const { registerUser } = await import("./_actions");
+      const result = await registerUser({
+        ...validPayload,
+        phone: "<script>alert(1)</script>",
+      });
+
+      expect(result.error).toBeTruthy();
+      expect(mockCreateUser).not.toHaveBeenCalled();
+    });
+
+    it("passes validation and proceeds for valid payload", async () => {
+      mockSuccessfulCreation();
+
+      const { registerUser } = await import("./_actions");
+      const result = await registerUser(validPayload);
+
+      expect(result.error).toBeNull();
+      expect(mockCreateUser).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // Registration logic
   // -------------------------------------------------------------------------
 
@@ -227,17 +274,14 @@ describe("registerUser — server action", () => {
       expect(result.error).toBeNull();
     });
 
-    it("converts empty phone to null in user_metadata", async () => {
-      mockSuccessfulCreation();
-
+    it("rejects empty phone — H3 server-side validation blocks before createUser", async () => {
+      // Before H3, empty phone was allowed and converted to null.
+      // With server-side Zod validation, an empty phone is now a validation error.
       const { registerUser } = await import("./_actions");
-      await registerUser({ ...validPayload, phone: "" });
+      const result = await registerUser({ ...validPayload, phone: "" });
 
-      expect(mockCreateUser).toHaveBeenCalledWith(
-        expect.objectContaining({
-          user_metadata: expect.objectContaining({ phone: null }),
-        }),
-      );
+      expect(result.error).toBeTruthy();
+      expect(mockCreateUser).not.toHaveBeenCalled();
     });
   });
 });

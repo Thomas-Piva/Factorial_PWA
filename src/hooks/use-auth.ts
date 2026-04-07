@@ -30,15 +30,14 @@ export interface UseAuthReturn {
 
 async function fetchProfile(userId: string): Promise<Profile | null> {
   const supabase = createClient();
-  // database.ts is a placeholder until types are regenerated; cast required.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("profiles")
     .select("id, email, full_name, phone, role, workplace_id, avatar_url, created_at, updated_at")
     .eq("id", userId)
     .single();
 
-  if (error ?? !data) return null;
+  // H1 fix: || instead of ?? — bail out if there is an error OR data is absent
+  if (error || !data) return null;
 
   // H4: validate the raw DB row before trusting it as Profile
   const parsed = profileSchema.safeParse(data);
