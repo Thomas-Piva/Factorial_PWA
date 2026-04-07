@@ -9,6 +9,8 @@ interface AuthContextValue {
   loading: boolean;
 }
 
+// Default loading:true prevents a flash of authenticated content before
+// the initial getUser() call completes.
 const AuthContext = createContext<AuthContextValue>({
   user: null,
   loading: true,
@@ -21,10 +23,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setLoading(false);
-    });
+    // H5 fix: catch network/token errors so loading never stays true forever.
+    supabase.auth
+      .getUser()
+      .then(({ data: { user: initialUser } }) => {
+        setUser(initialUser);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
 
     const {
       data: { subscription },
