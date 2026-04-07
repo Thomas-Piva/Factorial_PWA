@@ -85,12 +85,17 @@ export async function registerUser(
   // -------------------------------------------------------------------------
   const admin = createAdminClient();
 
+  // Split "full_name" into first_name / last_name for the DB schema
+  const [first_name, ...rest] = data.full_name.trim().split(/\s+/);
+  const last_name = rest.join(" ") || "-";
+
   const { data: authData, error: authError } =
     await admin.auth.admin.createUser({
       email: data.email,
       password: data.password,
       user_metadata: {
-        full_name: data.full_name,
+        first_name,
+        last_name,
         phone: data.phone || null,
         role: data.role,
       },
@@ -104,7 +109,8 @@ export async function registerUser(
   const { error: profileError } = await admin.from("profiles").upsert({
     id: authData.user.id,
     email: data.email,
-    full_name: data.full_name,
+    first_name,
+    last_name,
     phone: data.phone || null,
     role: data.role,
   });

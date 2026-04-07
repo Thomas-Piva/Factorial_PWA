@@ -212,7 +212,8 @@ describe("registerUser — server action", () => {
         email: validPayload.email,
         password: validPayload.password,
         user_metadata: {
-          full_name: validPayload.full_name,
+          first_name: "Nuovo",
+          last_name: "Dipendente",
           phone: validPayload.phone,
           role: validPayload.role,
         },
@@ -231,7 +232,8 @@ describe("registerUser — server action", () => {
         expect.objectContaining({
           id: NEW_USER_UUID,
           email: validPayload.email,
-          full_name: validPayload.full_name,
+          first_name: "Nuovo",
+          last_name: "Dipendente",
           role: validPayload.role,
         }),
       );
