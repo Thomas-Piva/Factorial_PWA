@@ -48,9 +48,10 @@ const callerUser: Partial<User> = {
 const validPayload = {
   email: "nuovo@example.com",
   password: "password123",
-  full_name: "Nuovo Dipendente",
+  first_name: "Nuovo",
+  last_name: "Dipendente",
   phone: "3331234567",
-  role: "employee" as const,
+  role: "dipendente" as const,
 };
 
 function mockManagerCaller() {
@@ -120,10 +121,10 @@ describe("registerUser — server action", () => {
       expect(mockCreateUser).not.toHaveBeenCalled();
     });
 
-    it("returns error when caller role is 'employee' (not a manager)", async () => {
+    it("returns error when caller role is 'dipendente' (not a manager)", async () => {
       mockGetUser.mockResolvedValue({ data: { user: callerUser }, error: null });
       mockServerSingle.mockResolvedValue({
-        data: { role: "employee" },
+        data: { role: "dipendente" },
         error: null,
       });
 
@@ -212,8 +213,8 @@ describe("registerUser — server action", () => {
         email: validPayload.email,
         password: validPayload.password,
         user_metadata: {
-          first_name: "Nuovo",
-          last_name: "Dipendente",
+          first_name: validPayload.first_name,
+          last_name: validPayload.last_name,
           phone: validPayload.phone,
           role: validPayload.role,
         },
@@ -232,8 +233,8 @@ describe("registerUser — server action", () => {
         expect.objectContaining({
           id: NEW_USER_UUID,
           email: validPayload.email,
-          first_name: "Nuovo",
-          last_name: "Dipendente",
+          first_name: validPayload.first_name,
+          last_name: validPayload.last_name,
           role: validPayload.role,
         }),
       );

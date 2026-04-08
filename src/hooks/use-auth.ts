@@ -32,7 +32,7 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, email, full_name, phone, role, workplace_id, avatar_url, created_at, updated_at")
+    .select("id, email, first_name, last_name, preferred_name, gender, phone, role, avatar_url, is_active, created_at, updated_at")
     .eq("id", userId)
     .single();
 
@@ -85,7 +85,7 @@ export function useAuth(): UseAuthReturn {
     profile,
     role,
     isManager: role === RUOLI.MANAGER,
-    isEmployee: role === RUOLI.EMPLOYEE,
+    isEmployee: role === RUOLI.DIPENDENTE,
     signIn,
     signOut,
   };

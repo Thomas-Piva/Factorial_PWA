@@ -2,7 +2,7 @@ import type { UserRole } from "@/types";
 
 export const RUOLI = {
   MANAGER: "manager" as UserRole,
-  EMPLOYEE: "employee" as UserRole,
+  DIPENDENTE: "dipendente" as UserRole,
 } as const;
 
 export const COLORI_TURNI = {

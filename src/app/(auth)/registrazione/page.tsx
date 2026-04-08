@@ -8,10 +8,6 @@ import { RUOLI } from "@/lib/constants";
 import { registerUser } from "./_actions";
 import { registerSchema, type RegisterFormValues } from "./_schema";
 
-// ---------------------------------------------------------------------------
-// Form (exported for direct testing)
-// ---------------------------------------------------------------------------
-
 export function RegisterForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -23,7 +19,7 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: "employee" },
+    defaultValues: { role: RUOLI.DIPENDENTE },
   });
 
   async function onSubmit(values: RegisterFormValues) {
@@ -32,7 +28,7 @@ export function RegisterForm() {
 
     const { error } = await registerUser({
       ...values,
-      role: values.role as "manager" | "employee",
+      role: values.role as "manager" | "dipendente",
     });
 
     if (error) {
@@ -86,23 +82,43 @@ export function RegisterForm() {
         )}
       </div>
 
-      {/* Nome completo */}
+      {/* Nome */}
       <div className="space-y-1">
         <label
-          htmlFor="full_name"
+          htmlFor="first_name"
           className="block text-sm font-medium text-gray-700"
         >
-          Nome completo
+          Nome
         </label>
         <input
-          id="full_name"
+          id="first_name"
           type="text"
-          autoComplete="name"
+          autoComplete="given-name"
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100"
-          {...register("full_name")}
+          {...register("first_name")}
         />
-        {errors.full_name && (
-          <p className="text-xs text-red-600">{errors.full_name.message}</p>
+        {errors.first_name && (
+          <p className="text-xs text-red-600">{errors.first_name.message}</p>
+        )}
+      </div>
+
+      {/* Cognome */}
+      <div className="space-y-1">
+        <label
+          htmlFor="last_name"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Cognome
+        </label>
+        <input
+          id="last_name"
+          type="text"
+          autoComplete="family-name"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100"
+          {...register("last_name")}
+        />
+        {errors.last_name && (
+          <p className="text-xs text-red-600">{errors.last_name.message}</p>
         )}
       </div>
 
@@ -139,8 +155,8 @@ export function RegisterForm() {
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100"
           {...register("role")}
         >
-          <option value="employee">Dipendente</option>
-          <option value="manager">Manager</option>
+          <option value={RUOLI.DIPENDENTE}>Dipendente</option>
+          <option value={RUOLI.MANAGER}>Manager</option>
         </select>
         {errors.role && (
           <p className="text-xs text-red-600">{errors.role.message}</p>
@@ -172,15 +188,11 @@ export function RegisterForm() {
         disabled={isSubmitting}
         className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isSubmitting ? "Registrazione in corso…" : "Registra"}
+        {isSubmitting ? "Registrazione in corso..." : "Registra"}
       </button>
     </form>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Page (default export — guarded by RoleGate)
-// ---------------------------------------------------------------------------
 
 export default function RegisterPage() {
   return (

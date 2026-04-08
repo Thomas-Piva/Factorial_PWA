@@ -10,11 +10,14 @@ import { z } from "zod";
 export const profileSchema = z.object({
   id: z.uuid(),
   email: z.email(),
-  full_name: z.string(),
+  first_name: z.string(),
+  last_name: z.string(),
+  preferred_name: z.string().nullable(),
+  gender: z.string().nullable(),
   phone: z.string().nullable(),
-  role: z.enum(["manager", "employee"]),
-  workplace_id: z.uuid().nullable(),
+  role: z.enum(["manager", "dipendente"]),
   avatar_url: z.string().nullable(),
+  is_active: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
 });

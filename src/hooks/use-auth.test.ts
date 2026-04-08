@@ -41,7 +41,6 @@ vi.mock("next/navigation", () => ({
 
 // UUIDs conform to the format expected by profileSchema (z.uuid())
 const USER_UUID = "550e8400-e29b-41d4-a716-446655440001";
-const WORKPLACE_UUID = "550e8400-e29b-41d4-a716-446655440002";
 
 const fakeUser: User = {
   id: USER_UUID,
@@ -55,11 +54,14 @@ const fakeUser: User = {
 const fakeProfile: Profile = {
   id: USER_UUID,
   email: "alice@example.com",
-  full_name: "Alice Rossi",
+  first_name: "Alice",
+  last_name: "Rossi",
+  preferred_name: null,
+  gender: null,
   phone: null,
   role: "manager",
-  workplace_id: WORKPLACE_UUID,
   avatar_url: null,
+  is_active: true,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
@@ -148,7 +150,7 @@ describe("useAuth", () => {
 
       expect(mockFrom).toHaveBeenCalledWith("profiles");
       expect(mockSelect).toHaveBeenCalledWith(
-        "id, email, full_name, phone, role, workplace_id, avatar_url, created_at, updated_at",
+        "id, email, first_name, last_name, preferred_name, gender, phone, role, avatar_url, is_active, created_at, updated_at",
       );
       expect(mockEq).toHaveBeenCalledWith("id", fakeUser.id);
     });
@@ -297,7 +299,7 @@ describe("useAuth", () => {
     });
 
     it("returns isEmployee=true when role is employee", async () => {
-      const employeeProfile: Profile = { ...fakeProfile, role: "employee" };
+      const employeeProfile: Profile = { ...fakeProfile, role: "dipendente" };
       mockUseAuthContext.mockReturnValue({ user: fakeUser, loading: false });
       mockFrom.mockReturnValue({
         select: () => ({

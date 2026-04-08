@@ -1,15 +1,18 @@
 // Shared domain types used across the application.
 
-export type UserRole = "manager" | "employee";
+export type UserRole = "manager" | "dipendente";
 
 export interface Profile {
   id: string;
   email: string;
-  full_name: string;
+  first_name: string;
+  last_name: string;
+  preferred_name: string | null;
+  gender: string | null;
   phone: string | null;
   role: UserRole;
-  workplace_id: string | null;
   avatar_url: string | null;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -21,4 +24,4 @@ export interface Workplace {
   created_at: string;
 }
 
-export type WeekStatus = "draft" | "published";
+export type WeekStatus = "bozza" | "pubblicato";

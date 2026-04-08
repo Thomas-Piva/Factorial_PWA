@@ -7,25 +7,20 @@ import type { UseAuthReturn } from "@/hooks/use-auth";
 // Mocks
 // ---------------------------------------------------------------------------
 
-// Server action — mocked so tests never hit Supabase Admin API
 const mockRegisterUser = vi.fn();
 vi.mock("./_actions", () => ({
   registerUser: (...args: unknown[]) => mockRegisterUser(...args),
 }));
 
-// RoleGate — mocked to pass through; its own tests cover RBAC logic
 vi.mock("@/components/shared/role-gate", () => ({
   RoleGate: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// useAuth — used by RoleGate (mock in place even if RoleGate is also mocked,
-// keeps imports clean and allows testing role-gated exports if needed)
 const mockUseAuth = vi.fn();
 vi.mock("@/hooks/use-auth", () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-// next/navigation
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(() => ({ push: mockPush })),
@@ -73,7 +68,8 @@ describe("RegisterPage / RegisterForm", () => {
 
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/nome completo/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^nome$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/cognome/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/telefono/i)).toBeInTheDocument();
     });
 
@@ -101,12 +97,12 @@ describe("RegisterPage / RegisterForm", () => {
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
     });
 
-    it("role selector defaults to 'employee'", async () => {
+    it("role selector defaults to 'dipendente'", async () => {
       const { RegisterForm } = await import("./page");
       render(<RegisterForm />);
 
       const select = screen.getByRole("combobox", { name: /ruolo/i });
-      expect((select as HTMLSelectElement).value).toBe("employee");
+      expect((select as HTMLSelectElement).value).toBe("dipendente");
     });
   });
 
@@ -134,7 +130,8 @@ describe("RegisterPage / RegisterForm", () => {
 
       await user.type(screen.getByLabelText(/email/i), "non-un-email");
       await user.type(screen.getByLabelText(/password/i), "password123");
-      await user.type(screen.getByLabelText(/nome completo/i), "Mario Rossi");
+      await user.type(screen.getByLabelText(/^nome$/i), "Mario");
+      await user.type(screen.getByLabelText(/cognome/i), "Rossi");
       await user.type(screen.getByLabelText(/telefono/i), "3331234567");
       await user.click(screen.getByRole("button", { name: /registra/i }));
 
@@ -150,7 +147,8 @@ describe("RegisterPage / RegisterForm", () => {
 
       await user.type(screen.getByLabelText(/email/i), "mario@example.com");
       await user.type(screen.getByLabelText(/password/i), "short");
-      await user.type(screen.getByLabelText(/nome completo/i), "Mario Rossi");
+      await user.type(screen.getByLabelText(/^nome$/i), "Mario");
+      await user.type(screen.getByLabelText(/cognome/i), "Rossi");
       await user.type(screen.getByLabelText(/telefono/i), "3331234567");
       await user.click(screen.getByRole("button", { name: /registra/i }));
 
@@ -159,13 +157,14 @@ describe("RegisterPage / RegisterForm", () => {
       });
     });
 
-    it("shows full_name required error", async () => {
+    it("shows first_name required error", async () => {
       const user = userEvent.setup();
       const { RegisterForm } = await import("./page");
       render(<RegisterForm />);
 
       await user.type(screen.getByLabelText(/email/i), "mario@example.com");
       await user.type(screen.getByLabelText(/password/i), "password123");
+      await user.type(screen.getByLabelText(/cognome/i), "Rossi");
       await user.type(screen.getByLabelText(/telefono/i), "3331234567");
       await user.click(screen.getByRole("button", { name: /registra/i }));
 
@@ -181,7 +180,8 @@ describe("RegisterPage / RegisterForm", () => {
 
       await user.type(screen.getByLabelText(/email/i), "mario@example.com");
       await user.type(screen.getByLabelText(/password/i), "password123");
-      await user.type(screen.getByLabelText(/nome completo/i), "Mario Rossi");
+      await user.type(screen.getByLabelText(/^nome$/i), "Mario");
+      await user.type(screen.getByLabelText(/cognome/i), "Rossi");
       await user.click(screen.getByRole("button", { name: /registra/i }));
 
       await waitFor(() => {
@@ -196,7 +196,8 @@ describe("RegisterPage / RegisterForm", () => {
 
       await user.type(screen.getByLabelText(/email/i), "mario@example.com");
       await user.type(screen.getByLabelText(/password/i), "password123");
-      await user.type(screen.getByLabelText(/nome completo/i), "Mario Rossi");
+      await user.type(screen.getByLabelText(/^nome$/i), "Mario");
+      await user.type(screen.getByLabelText(/cognome/i), "Rossi");
       await user.type(screen.getByLabelText(/telefono/i), "<script>xss</script>");
       await user.click(screen.getByRole("button", { name: /registra/i }));
 
@@ -216,7 +217,8 @@ describe("RegisterPage / RegisterForm", () => {
     const validFormData = {
       email: "mario@example.com",
       password: "password123",
-      full_name: "Mario Rossi",
+      first_name: "Mario",
+      last_name: "Rossi",
       phone: "3331234567",
     };
 
@@ -227,8 +229,12 @@ describe("RegisterPage / RegisterForm", () => {
         validFormData.password,
       );
       await user.type(
-        screen.getByLabelText(/nome completo/i),
-        validFormData.full_name,
+        screen.getByLabelText(/^nome$/i),
+        validFormData.first_name,
+      );
+      await user.type(
+        screen.getByLabelText(/cognome/i),
+        validFormData.last_name,
       );
       await user.type(screen.getByLabelText(/telefono/i), validFormData.phone);
       await user.click(screen.getByRole("button", { name: /registra/i }));
@@ -246,9 +252,10 @@ describe("RegisterPage / RegisterForm", () => {
         expect(mockRegisterUser).toHaveBeenCalledWith({
           email: validFormData.email,
           password: validFormData.password,
-          full_name: validFormData.full_name,
+          first_name: validFormData.first_name,
+          last_name: validFormData.last_name,
           phone: validFormData.phone,
-          role: "employee",
+          role: "dipendente",
         });
       });
     });
@@ -323,7 +330,8 @@ describe("RegisterPage / RegisterForm", () => {
         "esistente@example.com",
       );
       await user.type(screen.getByLabelText(/password/i), "password123");
-      await user.type(screen.getByLabelText(/nome completo/i), "Utente Già");
+      await user.type(screen.getByLabelText(/^nome$/i), "Utente");
+      await user.type(screen.getByLabelText(/cognome/i), "Esistente");
       await user.type(screen.getByLabelText(/telefono/i), "3331234567");
       await user.click(screen.getByRole("button", { name: /registra/i }));
     }
@@ -404,7 +412,8 @@ describe("RegisterPage / RegisterForm", () => {
 
       await user.type(screen.getByLabelText(/email/i), "mario@example.com");
       await user.type(screen.getByLabelText(/password/i), "password123");
-      await user.type(screen.getByLabelText(/nome completo/i), "Mario Rossi");
+      await user.type(screen.getByLabelText(/^nome$/i), "Mario");
+      await user.type(screen.getByLabelText(/cognome/i), "Rossi");
       await user.type(screen.getByLabelText(/telefono/i), "3331234567");
 
       const button = screen.getByRole("button", { name: /registra/i });

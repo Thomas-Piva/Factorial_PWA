@@ -148,7 +148,7 @@ describe("RoleGate", () => {
       mockUseAuth.mockReturnValue(
         makeAuthState({
           isAuthenticated: true,
-          role: "employee",
+          role: "dipendente",
           isEmployee: true,
         }),
       );
@@ -171,7 +171,7 @@ describe("RoleGate", () => {
       mockUseAuth.mockReturnValue(
         makeAuthState({
           isAuthenticated: true,
-          role: "employee",
+          role: "dipendente",
           isEmployee: true,
         }),
       );
@@ -191,7 +191,7 @@ describe("RoleGate", () => {
       mockUseAuth.mockReturnValue(
         makeAuthState({
           isAuthenticated: true,
-          role: "employee",
+          role: "dipendente",
           isEmployee: true,
         }),
       );
@@ -236,14 +236,14 @@ describe("RoleGate", () => {
       mockUseAuth.mockReturnValue(
         makeAuthState({
           isAuthenticated: true,
-          role: "employee",
+          role: "dipendente",
           isEmployee: true,
         }),
       );
 
       const { RoleGate } = await import("./role-gate");
       render(
-        <RoleGate allowedRoles={["employee"]}>
+        <RoleGate allowedRoles={["dipendente"]}>
           <span>area dipendente</span>
         </RoleGate>,
       );
@@ -255,14 +255,14 @@ describe("RoleGate", () => {
       mockUseAuth.mockReturnValue(
         makeAuthState({
           isAuthenticated: true,
-          role: "employee",
+          role: "dipendente",
           isEmployee: true,
         }),
       );
 
       const { RoleGate } = await import("./role-gate");
       render(
-        <RoleGate allowedRoles={["manager", "employee"]}>
+        <RoleGate allowedRoles={["manager", "dipendente"]}>
           <span>area condivisa</span>
         </RoleGate>,
       );
@@ -383,7 +383,7 @@ describe("RoleGate", () => {
 
       const { RoleGate } = await import("./role-gate");
       const { container } = render(
-        <RoleGate allowedRoles={["manager", "employee"]}>
+        <RoleGate allowedRoles={["manager", "dipendente"]}>
           <span>protected</span>
         </RoleGate>,
       );
