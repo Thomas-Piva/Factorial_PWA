@@ -10,6 +10,20 @@ export default defineConfig({
     setupFiles: "./src/test/setup.ts",
     coverage: {
       provider: "v8",
+      reporter: ["text", "lcov", "html"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/components/ui/**",
+        "src/types/**",
+        "**/*.d.ts",
+        "src/test/**",
+        "src/lib/supabase/**",
+        "src/providers/**",
+        "src/lib/date-utils.ts",
+        "src/app/**/layout.tsx",
+        "src/app/page.tsx",
+        "src/app/*/page.tsx",
+      ],
       thresholds: {
         lines: 80,
         functions: 80,
