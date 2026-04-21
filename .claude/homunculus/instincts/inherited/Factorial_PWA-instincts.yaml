@@ -1,0 +1,319 @@
+# Instincts generated from https://github.com/Thomas-Piva/Factorial_PWA
+# Generated: 2026-04-07T20:11:24.324Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: Factorial_PWA-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_PWA Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: fix
+
+## Evidence
+
+- 1 commits analyzed
+- Detected conventional commit pattern
+- Examples: fix(db): risoluzione vulnerabilità di sicurezza RLS, vincoli integrità e isolamento trigger OTP in seed
+
+---
+id: Factorial_PWA-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_PWA Commit Length
+
+## Action
+
+Write detailed commit messages (~103 characters for first line)
+
+## Evidence
+
+- Average commit message length: 103 chars
+- Based on 1 commits
+
+---
+id: Factorial_PWA-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_PWA Naming Files
+
+## Action
+
+Use snake_case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: snake_case
+
+---
+id: Factorial_PWA-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_PWA Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: Factorial_PWA-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_PWA Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: Factorial_PWA-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_PWA Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: factorial_pwa-instinct-file-naming
+trigger: "When creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct File Naming
+
+## Action
+
+Name the file using snake_case
+
+## Evidence
+
+- Pattern in namingConventions.files
+
+---
+id: factorial_pwa-instinct-function-naming
+trigger: "When defining a function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Function Naming
+
+## Action
+
+Name the function using camelCase
+
+## Evidence
+
+- Pattern in namingConventions.functions
+
+---
+id: factorial_pwa-instinct-class-naming
+trigger: "When defining a class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase
+
+## Evidence
+
+- Pattern in namingConventions.classes
+
+---
+id: factorial_pwa-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE
+
+## Evidence
+
+- Pattern in namingConventions.constants
+
+---
+id: factorial_pwa-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Import Style
+
+## Action
+
+Use relative import paths
+
+## Evidence
+
+- Pattern in importStyle
+
+---
+id: factorial_pwa-instinct-export-style
+trigger: "When exporting modules or functions"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Export Style
+
+## Action
+
+Use named exports
+
+## Evidence
+
+- Pattern in exportStyle
+
+---
+id: factorial_pwa-instinct-git-commit-format
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Git Commit Format
+
+## Action
+
+Use the conventional commit format with a prefix (e.g., fix:)
+
+## Evidence
+
+- Pattern in commits.type
+- Examples in commits.examples
+
+---
+id: factorial_pwa-instinct-git-commit-prefix
+trigger: "When fixing a bug or issue"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Git Commit Prefix
+
+## Action
+
+Prefix the commit message with 'fix'
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Examples in commits.examples
+
+---
+id: factorial_pwa-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Test Location
+
+## Action
+
+Place test files in a separate location from source files
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
+---
+id: factorial_pwa-instinct-types-folder
+trigger: "When defining shared types"
+confidence: 0.7
+domain: architecture
+source: repo-analysis
+source_repo: Thomas-Piva/Factorial_PWA
+---
+
+# Factorial_pwa Instinct Types Folder
+
+## Action
+
+Place type definitions in the 'types' folder under 'src'
+
+## Evidence
+
+- Pattern in architecture.folderStructure.srcLayout
+
